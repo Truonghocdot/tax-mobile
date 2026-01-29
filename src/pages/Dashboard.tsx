@@ -193,7 +193,7 @@ const Dashboard = () => {
           {/* Watermark */}
           <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
             <div className="w-48 h-48 rounded-full border-8 border-current">
-              <img src={taxEmblem} alt="" className="w-full h-full" />
+              <img src={trongDongImage} alt="" className="w-full h-full" />
             </div>
           </div>
 
