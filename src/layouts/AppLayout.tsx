@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import MobileHeader from "@/components/MobileHeader";
 import BottomNavigation from "@/components/BottomNavigation";
 import MenuSidebar from "@/components/MenuSidebar";
+import backgroundImage from "@/assets/background.png";
 
 interface PageConfig {
   title: string;
@@ -42,7 +43,17 @@ const pageConfigs: Record<string, PageConfig> = {
     showHome: true,
   },
   "/profile": {
-    title: "Cá nhân",
+    title: "Cập nhật hồ sơ",
+    showBack: true,
+    showHome: true,
+  },
+  "/identification": {
+    title: "Thuế Điện Tử",
+    showBack: true,
+    showHome: true,
+  },
+  "/bank-registration": {
+    title: "Đăng ký ngân hàng",
     showBack: true,
     showHome: true,
   },
@@ -60,8 +71,15 @@ const AppLayout = () => {
   };
 
   return (
-    <div className="mobile-container min-h-screen bg-background pb-20">
-      {/* Header */}
+    <div className="mobile-container relative min-h-screen bg-background pb-20">
+      <div
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat pointer-events-none"
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          opacity: 2,
+        }}
+      ></div>
+      {/* Header - only show if not hidden */}
       {!currentConfig.hideHeader && (
         <MobileHeader
           title={currentConfig.title}
@@ -78,8 +96,10 @@ const AppLayout = () => {
       {/* Page Content */}
       <Outlet context={{ menuOpen, setMenuOpen }} />
 
-      {/* Menu Sidebar */}
-      <MenuSidebar isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
+      {/* Menu Sidebar - only for pages that don't manage their own */}
+      {currentConfig.hideHeader && (
+        <MenuSidebar isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
+      )}
 
       {/* Bottom Navigation */}
       {!currentConfig.hideBottomNav && <BottomNavigation />}

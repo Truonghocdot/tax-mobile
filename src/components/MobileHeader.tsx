@@ -1,67 +1,86 @@
-import { ChevronLeft, Home, Menu, Wifi, Battery, Signal } from "lucide-react";
+import { ArrowLeft, Bell, Home, Menu } from "lucide-react";
+import { cn } from "@/lib/utils";
+import thueDienTu from "@/assets/thuedinetu.png";
 
 interface MobileHeaderProps {
-  title: string;
+  title?: string;
   showBack?: boolean;
   showHome?: boolean;
   showMenu?: boolean;
+  showBell?: boolean;
   onBack?: () => void;
   onHome?: () => void;
   onMenu?: () => void;
+  onBell?: () => void;
   variant?: "primary" | "transparent";
 }
 
 const MobileHeader = ({
-  title,
+  title = "Thuế Điện Tử",
   showBack = false,
   showHome = false,
   showMenu = false,
+  showBell = true,
   onBack,
   onHome,
   onMenu,
+  onBell,
   variant = "primary",
 }: MobileHeaderProps) => {
-  const isPrimary = variant === "primary";
-
   return (
     <header
-      className={`sticky top-0 z-40 safe-top ${
-        isPrimary ? "bg-gradient-primary text-primary-foreground" : "bg-transparent text-foreground"
-      }`}
+      className={cn(
+        "sticky top-0 z-40 safe-top",
+        variant === "primary" && "bg-gradient-primary",
+        variant === "transparent" && "bg-transparent",
+      )}
     >
-      {/* Navigation bar */}
       <div className="flex items-center justify-between px-4 py-3">
-        <div className="w-10">
-          {showBack && (
-            <button
-              onClick={onBack}
-              className="p-2 -ml-2 rounded-full transition-colors active:bg-white/10"
-              aria-label="Quay lại"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-          )}
+        {/* Left Actions */}
+        <div className="flex items-center gap-2 w-12">
           {showMenu && (
             <button
               onClick={onMenu}
-              className="p-2 -ml-2 rounded-full transition-colors active:bg-white/10"
+              className="p-2 rounded-lg text-primary-foreground hover:bg-white/10 transition-colors"
               aria-label="Menu"
             >
-              <Menu className="w-6 h-6" />
+              <Menu size={32} />
+            </button>
+          )}
+          {showBack && (
+            <button
+              onClick={onBack}
+              className="p-2 rounded-lg text-primary-foreground hover:bg-white/10 transition-colors"
+              aria-label="Quay lại"
+            >
+              <ArrowLeft size={32} />
             </button>
           )}
         </div>
 
-        <h1 className="font-semibold text-lg">{title}</h1>
+        {/* Center - Logo */}
+        <div className="flex flex-col items-center">
+          <img src={thueDienTu} className="h-[5rem] w-auto" />
+        </div>
 
-        <div className="w-10 flex justify-end">
+        {/* Right Actions */}
+        <div className="flex items-center gap-1 w-12 justify-end">
+          {showBell && (
+            <button
+              onClick={onBell}
+              className="p-2 rounded-lg text-primary-foreground hover:bg-white/10 transition-colors"
+              aria-label="Thông báo"
+            >
+              <Bell size={32} />
+            </button>
+          )}
           {showHome && (
             <button
               onClick={onHome}
-              className="p-2 -mr-2 rounded-full transition-colors active:bg-white/10"
+              className="p-2 rounded-lg text-primary-foreground hover:bg-white/10 transition-colors"
               aria-label="Trang chủ"
             >
-              <Home className="w-5 h-5" />
+              <Home size={32} />
             </button>
           )}
         </div>

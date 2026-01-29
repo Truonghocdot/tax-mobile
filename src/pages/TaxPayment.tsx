@@ -1,53 +1,29 @@
-import { useState } from 'react';
-import TabSwitch from '@/components/TabSwitch';
+import trongDongImage from "@/assets/trong.png";
 
 const TaxPayment = () => {
-  const [activeTab, setActiveTab] = useState(0);
-
-  const tabs = ['Tất cả', 'Lệ phí trước bạ'];
-
   return (
-    <>
-      {/* Tab Switch */}
-      <div className="px-4 py-4 animate-fade-in">
-        <TabSwitch tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+    <div className="min-h-screen">
+      {/* Decorative header background */}
+      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-primary -z-10" />
+      
+      <div className="px-4 pt-4 pb-8">
+        <div 
+          className="bg-card rounded-2xl p-5 shadow-lg"
+          style={{
+            backgroundImage: `url(${trongDongImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <h2 className="text-lg font-semibold text-foreground mb-4">
+            Nộp thuế
+          </h2>
+          <p className="text-muted-foreground text-sm">
+            Chức năng đang được phát triển...
+          </p>
+        </div>
       </div>
-
-      {/* Content */}
-      <div className="px-4 animate-slide-up">
-        {activeTab === 0 ? (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Mã hồ sơ <span className="text-destructive">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Nhập mã hồ sơ"
-                className="input-field"
-              />
-            </div>
-
-            <button className="btn-primary w-full">Tra cứu</button>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Mã hồ sơ lệ phí trước bạ <span className="text-destructive">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Nhập mã hồ sơ lệ phí trước bạ"
-                className="input-field"
-              />
-            </div>
-
-            <button className="btn-primary w-full">Tra cứu</button>
-          </div>
-        )}
-      </div>
-    </>
+    </div>
   );
 };
 

@@ -1,142 +1,124 @@
-import { useNavigate } from "react-router-dom";
-import {
-  ChevronRight,
-  User,
-  Bell,
-  Shield,
-  Key,
-  Fingerprint,
-  HelpCircle,
-  FileText,
-  LogOut,
-} from "lucide-react";
-import taxEmblem from "@/assets/tax-emblem.png";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import trongDongImage from "@/assets/trong.png";
 
-interface SettingItem {
-  icon: React.ReactNode;
-  label: string;
-  path?: string;
-  danger?: boolean;
-}
+const profileSchema = z.object({
+  businessName: z.string().min(1, "Vui lòng nhập tên doanh nghiệp"),
+  taxCode: z.string().min(1, "Vui lòng nhập mã số thuế"),
+  representative: z.string().min(1, "Vui lòng nhập người đại diện"),
+  address: z.string().min(1, "Vui lòng nhập địa chỉ trụ sở"),
+  phone: z.string().min(10, "Số điện thoại không hợp lệ"),
+  capital: z.string().optional(),
+  foundingDate: z.string().optional(),
+  mainBusiness: z.string().optional(),
+  bankName: z.string().optional(),
+  bankAccount: z.string().optional(),
+});
+
+type ProfileFormData = z.infer<typeof profileSchema>;
 
 const Profile = () => {
-  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const settingsGroups: { title: string; items: SettingItem[] }[] = [
-    {
-      title: "Tài khoản",
-      items: [
-        {
-          icon: <User className="w-5 h-5" />,
-          label: "Thông tin cá nhân",
-          path: "/profile/info",
-        },
-        {
-          icon: <Bell className="w-5 h-5" />,
-          label: "Cài đặt thông báo",
-          path: "/profile/notifications",
-        },
-        {
-          icon: <Shield className="w-5 h-5" />,
-          label: "Bảo mật",
-          path: "/profile/security",
-        },
-      ],
+  const form = useForm<ProfileFormData>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      businessName: "",
+      taxCode: "",
+      representative: "",
+      address: "",
+      phone: "",
+      capital: "",
+      foundingDate: "",
+      mainBusiness: "",
+      bankName: "",
+      bankAccount: "",
     },
-    {
-      title: "Đăng nhập",
-      items: [
-        {
-          icon: <Key className="w-5 h-5" />,
-          label: "Đổi mật khẩu",
-          path: "/change-password",
-        },
-        {
-          icon: <Fingerprint className="w-5 h-5" />,
-          label: "Đăng nhập sinh trắc học",
-          path: "/biometric",
-        },
-      ],
-    },
-    {
-      title: "Hỗ trợ",
-      items: [
-        {
-          icon: <HelpCircle className="w-5 h-5" />,
-          label: "Trung tâm hỗ trợ",
-          path: "/support",
-        },
-        {
-          icon: <FileText className="w-5 h-5" />,
-          label: "Điều khoản sử dụng",
-          path: "/terms",
-        },
-      ],
-    },
+  });
+
+  const onSubmit = (data: ProfileFormData) => {
+    console.log("Profile data:", data);
+    toast({
+      title: "Cập nhật thành công",
+      description: "Thông tin doanh nghiệp đã được cập nhật!",
+    });
+  };
+
+  const formFields = [
+    { name: "businessName" as const, label: "Tên doanh nghiệp" },
+    { name: "taxCode" as const, label: "Mã số thuế" },
+    { name: "representative" as const, label: "Người đại diện" },
+    { name: "address" as const, label: "Địa chỉ trụ sở" },
+    { name: "phone" as const, label: "Số điện thoại" },
+    { name: "capital" as const, label: "Vốn điều lệ" },
+    { name: "foundingDate" as const, label: "Ngày thành lập" },
+    { name: "mainBusiness" as const, label: "Ngành nghề chính" },
+    { name: "bankName" as const, label: "Tên ngân hàng" },
+    { name: "bankAccount" as const, label: "Số tài khoản" },
   ];
 
   return (
-    <>
-      {/* Profile card */}
-      <div className="px-4 py-4 animate-fade-in">
-        <div className="card-elevated flex items-center gap-4">
-          <img
-            src={taxEmblem}
-            alt="Avatar"
-            className="w-16 h-16 rounded-full bg-primary/10 p-1"
-          />
-          <div className="flex-1">
-            <p className="text-sm text-muted-foreground">MST: 0100231226-999</p>
-          </div>
-          <ChevronRight className="w-5 h-5 text-muted-foreground" />
+    <div className="min-h-screen relative">
+      {/* Decorative header background */}
+      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-primary -z-10" />
+      
+      {/* Watermark decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+        <div className="absolute right-0 top-1/4 w-64 h-64 opacity-10">
+          <div className="w-full h-full rounded-full border-8 border-accent" />
+        </div>
+        <div className="absolute left-0 bottom-1/4 w-48 h-48 opacity-10">
+          <div className="w-full h-full rounded-full border-8 border-accent" />
         </div>
       </div>
 
-      {/* Settings groups */}
-      <div className="px-4 space-y-6 animate-slide-up">
-        {settingsGroups.map((group, groupIndex) => (
-          <div key={groupIndex}>
-            <h3 className="text-sm font-medium text-muted-foreground mb-2 px-1">
-              {group.title}
-            </h3>
-            <div className="card-elevated divide-y divide-border">
-              {group.items.map((item, itemIndex) => (
-                <button
-                  key={itemIndex}
-                  onClick={() => item.path && navigate(item.path)}
-                  className="w-full flex items-center justify-between py-3 first:pt-0 last:pb-0"
-                >
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={
-                        item.danger ? "text-destructive" : "text-primary"
-                      }
-                    >
-                      {item.icon}
-                    </span>
-                    <span
-                      className={`font-medium ${item.danger ? "text-destructive" : "text-foreground"}`}
-                    >
-                      {item.label}
-                    </span>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                </button>
-              ))}
-            </div>
-          </div>
-        ))}
-
-        {/* Logout button */}
-        <button
-          onClick={() => navigate("/login")}
-          className="w-full card-elevated flex items-center justify-center gap-2 py-3 text-destructive font-medium"
+      {/* Form Card */}
+      <div className="px-4 pt-4 pb-8">
+        <div 
+          className="bg-card rounded-2xl p-5 shadow-lg"
+          style={{
+            backgroundImage: `url(${trongDongImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
         >
-          <LogOut className="w-5 h-5" />
-          <span>Đăng xuất</span>
-        </button>
+          <h2 className="text-lg font-semibold text-foreground mb-6">
+            Thông tin doanh nghiệp
+          </h2>
+
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            {formFields.map((field) => (
+              <div key={field.name} className="space-y-1">
+                <label className="text-sm font-medium text-foreground">
+                  {field.label}
+                </label>
+                <Input
+                  {...form.register(field.name)}
+                  placeholder=""
+                  className="h-11 bg-background border-border rounded-lg"
+                />
+                {form.formState.errors[field.name] && (
+                  <p className="text-xs text-destructive">
+                    {form.formState.errors[field.name]?.message}
+                  </p>
+                )}
+              </div>
+            ))}
+
+            <Button
+              type="submit"
+              className="w-full h-12 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold mt-6"
+            >
+              Cập nhật
+            </Button>
+          </form>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 
