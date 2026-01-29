@@ -121,19 +121,19 @@ const Dashboard = () => {
             </div>
 
             <div className="flex-1">
-              <p className="text-md text-muted-foreground text-black font-semibold">
+              <p className="text-md  text-black font-semibold">
                 Mã Số Thuế:{" "}
                 <span className="font-semibold text-foreground">
                   Chưa có MST
                 </span>
               </p>
-              <p className="text-md text-muted-foreground text-black font-semibold">
+              <p className="text-md  text-black font-semibold">
                 Doanh Nghiệp:{" "}
-                <span className="font-semibold text-foreground">
+                <span className="font-semibold text-foreground">  
                   Chưa cập nhật thông tin
                 </span>
               </p>
-              <p className="text-primary font-semibold">0909234023</p>
+              <p className="text-primary text-black font-semibold">0909234023</p>
             </div>
           </div>
         </div>
