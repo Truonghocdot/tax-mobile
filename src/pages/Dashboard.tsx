@@ -97,7 +97,11 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background pb-6">
       {/* Header */}
-      <MobileHeader showMenu onMenu={() => setMenuOpen(true)} onBell={() => navigate("/notifications")} />
+      <MobileHeader
+        showMenu
+        onMenu={() => setMenuOpen(true)}
+        onBell={() => navigate("/notifications")}
+      />
 
       {/* Decorative background */}
       <div className="relative">
@@ -118,10 +122,16 @@ const Dashboard = () => {
 
             <div className="flex-1">
               <p className="text-md text-muted-foreground text-black font-semibold">
-                Mã Số Thuế: <span className="font-semibold text-foreground">Chưa có MST</span>
+                Mã Số Thuế:{" "}
+                <span className="font-semibold text-foreground">
+                  Chưa có MST
+                </span>
               </p>
               <p className="text-md text-muted-foreground text-black font-semibold">
-                Doanh Nghiệp: <span className="font-semibold text-foreground">Chưa cập nhật thông tin</span>
+                Doanh Nghiệp:{" "}
+                <span className="font-semibold text-foreground">
+                  Chưa cập nhật thông tin
+                </span>
               </p>
               <p className="text-primary font-semibold">0909234023</p>
             </div>
@@ -140,7 +150,9 @@ const Dashboard = () => {
             backgroundPosition: "center",
           }}
         >
-          <h2 className="text-sm font-semibold text-foreground mb-3">Chức năng hay dùng</h2>
+          <h2 className="text-sm font-semibold text-foreground mb-3">
+            Chức năng hay dùng
+          </h2>
           <div className="grid grid-cols-4 gap-3">
             {quickActions.map((item, index) => {
               const Icon = item.icon;
@@ -148,12 +160,14 @@ const Dashboard = () => {
                 <button
                   key={index}
                   onClick={() => item.path && navigate(item.path)}
-                  className="service-card bg-card border border-border"
+                  className="bg-card rounded-xl border border-border"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
+                  <div className="w-10 h-10 mx-auto rounded-xl bg-primary/10 flex items-center justify-center mb-2">
                     <Icon size={20} className={item.color || "text-primary"} />
                   </div>
-                  <span className="text-xs text-center text-foreground font-medium leading-tight">{item.label}</span>
+                  <p className="text-xs text-center text-foreground font-medium leading-tight">
+                    {item.label}
+                  </p>
                 </button>
               );
             })}
@@ -169,11 +183,13 @@ const Dashboard = () => {
           style={{
             backgroundImage: `url(${trongDongImage})`,
             opacity: 2,
-            backgroundSize: "cover",
+            backgroundSize: "fill",
             backgroundPosition: "center",
           }}
         >
-          <h2 className="text-sm font-semibold text-foreground mb-3">Danh sách nhóm dịch vụ</h2>
+          <h2 className="text-sm font-semibold text-foreground mb-3">
+            Danh sách nhóm dịch vụ
+          </h2>
           {/* Watermark */}
           <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
             <div className="w-48 h-48 rounded-full border-8 border-current">

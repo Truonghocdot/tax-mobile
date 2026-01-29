@@ -109,6 +109,7 @@
 
   html {
     font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 120%; /* Scale all text by 1.5x */
   }
 
   body {
