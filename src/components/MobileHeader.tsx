@@ -30,7 +30,7 @@ const MobileHeader = ({
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 safe-top",
+        "relative",
         variant === "primary" && "bg-gradient-primary",
         variant === "transparent" && "bg-transparent",
       )}

@@ -1,221 +1,258 @@
-import { useState, useRef } from "react";
-import { Info, Upload, Video, X } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Upload, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
+import { userApi } from "@/lib/api";
+import { useNavigate } from "react-router-dom";
 import trongDongImage from "@/assets/trong.png";
 
+const identificationSchema = z.object({
+  front: z.instanceof(File, { message: "Vui lòng tải lên CCCD mặt trước" }),
+  back: z.instanceof(File, { message: "Vui lòng tải lên CCCD mặt sau" }),
+  video: z.instanceof(File, { message: "Vui lòng tải video xác thực" }),
+  selfie: z.instanceof(File, { message: "Vui lòng tải lên ảnh cầm CCCD" }),
+});
+
+type IdentificationFormData = z.infer<typeof identificationSchema>;
+
 interface UploadSection {
-  id: string;
+  id: keyof IdentificationFormData;
   label: string;
   type: "image" | "video";
-  file: File | null;
   preview: string | null;
 }
 
 const Identification = () => {
-  const { toast } = useToast();
+  const { toast, dismiss } = useToast();
+  const navigate = useNavigate();
+  const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
+
+  // Clear any existing toasts when component mounts
+  useEffect(() => {
+    dismiss();
+  }, [dismiss]);
+
+  const {
+    setValue,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm<IdentificationFormData>({
+    resolver: zodResolver(identificationSchema),
+    mode: "onSubmit",
+  });
+
   const [uploads, setUploads] = useState<UploadSection[]>([
     {
       id: "front",
       label: "Tải lên CCCD mặt trước:",
       type: "image",
-      file: null,
       preview: null,
     },
     {
       id: "back",
       label: "Tải lên CCCD mặt sau:",
       type: "image",
-      file: null,
       preview: null,
     },
     {
       id: "video",
-      label: "Tải video từ 3-5 giây",
+      label: "Tải lên video xác thực:",
       type: "video",
-      file: null,
       preview: null,
     },
     {
       id: "selfie",
       label: "Tải lên ảnh cầm CCCD:",
       type: "image",
-      file: null,
       preview: null,
     },
   ]);
 
-  const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
-
-  const handleFileSelect = (id: string, file: File) => {
-    const isVideo = file.type.startsWith("video/");
-    const isImage = file.type.startsWith("image/");
-    const section = uploads.find((u) => u.id === id);
-
-    if (section?.type === "video" && !isVideo) {
+  const identityMutation = useMutation({
+    mutationFn: (data: IdentificationFormData) => {
+      const formData = new FormData();
+      formData.append("front", data.front);
+      formData.append("back", data.back);
+      formData.append("video", data.video);
+      formData.append("selfie", data.selfie);
+      return userApi.identityVerification(formData);
+    },
+    onSuccess: () => {
+      navigate("/loading");
+    },
+    onError: (error: { response?: { data?: { message?: string } } }) => {
+      console.error("Identity verification failed:", error);
       toast({
         title: "Lỗi",
-        description: "Vui lòng chọn file video",
+        description:
+          error.response?.data?.message || "Không thể xác thực danh tính",
         variant: "destructive",
       });
-      return;
-    }
+    },
+  });
 
-    if (section?.type === "image" && !isImage) {
-      toast({
-        title: "Lỗi",
-        description: "Vui lòng chọn file ảnh",
-        variant: "destructive",
-      });
-      return;
+  const handleFileChange = (
+    id: keyof IdentificationFormData,
+    file: File | null,
+  ) => {
+    if (file) {
+      setValue(id, file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUploads((prev) =>
+          prev.map((upload) =>
+            upload.id === id
+              ? { ...upload, preview: reader.result as string }
+              : upload,
+          ),
+        );
+      };
+      reader.readAsDataURL(file);
     }
-
-    const preview = URL.createObjectURL(file);
-    setUploads((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, file, preview } : u)),
-    );
   };
 
-  const handleRemove = (id: string) => {
+  const handleRemoveFile = (id: keyof IdentificationFormData) => {
+    setValue(id, undefined as any);
     setUploads((prev) =>
-      prev.map((u) => {
-        if (u.id === id && u.preview) {
-          URL.revokeObjectURL(u.preview);
-        }
-        return u.id === id ? { ...u, file: null, preview: null } : u;
-      }),
+      prev.map((upload) =>
+        upload.id === id ? { ...upload, preview: null } : upload,
+      ),
     );
+    if (fileInputRefs.current[id]) {
+      fileInputRefs.current[id]!.value = "";
+    }
   };
 
-  const handleSubmit = () => {
-    const missingUploads = uploads.filter((u) => !u.file);
-    if (missingUploads.length > 0) {
-      toast({
-        title: "Thiếu thông tin",
-        description: "Vui lòng tải lên đầy đủ các file yêu cầu",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    toast({
-      title: "Thành công",
-      description: "Đã gửi thông tin định danh. Vui lòng chờ xác minh.",
-    });
+  const onSubmit = (data: IdentificationFormData) => {
+    identityMutation.mutate(data);
   };
 
   return (
-    <div className="min-h-screen relative z-10">
-      <div className="px-4 pt-4 pb-8">
-        {/* Instructions */}
-        <div
-          className="bg-card rounded-xl p-4 mb-4 shadow-sm border border-border"
-          style={{
-            backgroundImage: `url(${trongDongImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          <div className="flex items-start gap-2">
-            <Info className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-            <p className="text-sm text-foreground">
-              <span className="font-semibold">Hướng dẫn:</span> Vui lòng tải lên
-              ảnh CCCD mặt trước, mặt sau, ảnh cầm CCCD và video xác thực (3-5
-              giây) để hoàn tất quá trình định danh.
-            </p>
-          </div>
+    <div className="min-h-screen relative bg-gradient-to-b from-red-600 to-red-700 p-6">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-white mb-2">
+            XÁC THỰC DANH TÍNH
+          </h1>
+          <p className="text-white/90 text-sm">
+            Vui lòng tải lên các tài liệu để xác thực danh tính
+          </p>
         </div>
 
-        {/* Upload Sections */}
-        <div className="space-y-4">
-          {uploads.map((section) => (
+        {/* Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {uploads.map((upload) => (
             <div
-              key={section.id}
-              className="bg-card rounded-xl p-4 shadow-sm border border-border"
+              key={upload.id}
+              className="bg-white rounded-xl p-4 shadow-lg"
               style={{
                 backgroundImage: `url(${trongDongImage})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
+                backgroundBlendMode: "overlay",
+                backgroundColor: "rgba(255, 255, 255, 0.95)",
               }}
             >
-              <label className="text-sm font-medium text-foreground mb-3 block">
-                {section.label}
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {upload.label}
               </label>
 
-              <div className="flex flex-col items-center gap-3">
-                {section.preview ? (
-                  <div className="relative w-full max-w-xs">
-                    {section.type === "image" ? (
-                      <img
-                        src={section.preview}
-                        alt={section.label}
-                        className="w-full h-40 object-cover rounded-lg border border-border"
-                      />
-                    ) : (
-                      <video
-                        src={section.preview}
-                        controls
-                        className="w-full h-40 object-cover rounded-lg border border-border"
-                      />
-                    )}
-                  </div>
-                ) : (
-                  <Button
+              {upload.preview ? (
+                <div className="relative">
+                  {upload.type === "image" ? (
+                    <img
+                      src={upload.preview}
+                      alt={upload.label}
+                      className="w-full h-48 object-cover rounded-lg"
+                    />
+                  ) : (
+                    <video
+                      src={upload.preview}
+                      className="w-full h-48 object-cover rounded-lg"
+                      controls
+                    />
+                  )}
+                  <button
                     type="button"
-                    onClick={() => fileInputRefs.current[section.id]?.click()}
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-6"
+                    onClick={() => handleRemoveFile(upload.id)}
+                    className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
                   >
-                    {section.type === "video" ? (
-                      <>
-                        <Video className="w-4 h-4 mr-2" />
-                        Chọn video
-                      </>
-                    ) : (
-                      <>
-                        <Upload className="w-4 h-4 mr-2" />
-                        Chọn ảnh
-                      </>
-                    )}
-                  </Button>
-                )}
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors">
+                  <input
+                    ref={(el) => (fileInputRefs.current[upload.id] = el)}
+                    type="file"
+                    accept={upload.type === "image" ? "image/*" : "video/*"}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        // Validate file type
+                        const isValid =
+                          upload.type === "image"
+                            ? file.type.startsWith("image/")
+                            : file.type.startsWith("video/");
 
-                <input
-                  ref={(el) => (fileInputRefs.current[section.id] = el)}
-                  type="file"
-                  accept={section.type === "video" ? "video/*" : "image/*"}
-                  className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) handleFileSelect(section.id, file);
-                  }}
-                />
+                        if (!isValid) {
+                          toast({
+                            title: "Lỗi",
+                            description: `Vui lòng chọn file ${upload.type === "image" ? "ảnh" : "video"}`,
+                            variant: "destructive",
+                          });
+                          return;
+                        }
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (section.preview) {
-                      handleRemove(section.id);
-                    } else {
-                      fileInputRefs.current[section.id]?.click();
-                    }
-                  }}
-                  className="w-8 h-8 rounded-full bg-destructive/10 flex items-center justify-center hover:bg-destructive/20 transition-colors"
-                >
-                  <X className="w-5 h-5 text-destructive" />
-                </button>
-              </div>
+                        handleFileChange(upload.id, file);
+                      }
+                    }}
+                    className="hidden"
+                    id={`file-${upload.id}`}
+                  />
+                  <label
+                    htmlFor={`file-${upload.id}`}
+                    className="cursor-pointer"
+                  >
+                    <Upload className="w-12 h-12 mx-auto text-gray-400 mb-2" />
+                    <p className="text-sm text-gray-600">
+                      Nhấn để tải lên{" "}
+                      {upload.type === "image" ? "ảnh" : "video"}
+                    </p>
+                  </label>
+                </div>
+              )}
+
+              {errors[upload.id] && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors[upload.id]?.message}
+                </p>
+              )}
             </div>
           ))}
-        </div>
 
-        {/* Submit Button */}
-        <Button
-          onClick={handleSubmit}
-          className="w-full h-12 mt-6 rounded-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold"
-        >
-          <Upload className="w-5 h-5 mr-2" />
-          Hoàn Tất Định Danh
-        </Button>
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            disabled={identityMutation.isPending}
+            className="w-full bg-yellow-400 hover:bg-yellow-500 text-red-900 font-bold text-lg h-14 rounded-full shadow-lg"
+          >
+            {identityMutation.isPending ? (
+              <>
+                <Loader2 className="animate-spin mr-2" />
+                Đang xử lý...
+              </>
+            ) : (
+              "Xác thực"
+            )}
+          </Button>
+        </form>
       </div>
     </div>
   );

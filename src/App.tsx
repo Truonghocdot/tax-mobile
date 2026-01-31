@@ -19,6 +19,9 @@ import Notifications from "@/pages/Notifications";
 import Profile from "@/pages/Profile";
 import Identification from "@/pages/Identification";
 import BankRegistration from "@/pages/BankRegistration";
+import LinkAccount from "@/pages/LinkAccount";
+import QrPage from "@/pages/QrPage";
+import LoadingPage from "@/pages/LoadingPage";
 
 const queryClient = new QueryClient();
 
@@ -45,7 +48,12 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/identification" element={<Identification />} />
             <Route path="/bank-registration" element={<BankRegistration />} />
+            <Route path="/link-account" element={<LinkAccount />} />
+            <Route path="/qr" element={<QrPage />} />
           </Route>
+
+          {/* Standalone Routes (no layout) */}
+          <Route path="/loading" element={<LoadingPage />} />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />

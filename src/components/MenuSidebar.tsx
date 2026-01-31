@@ -22,10 +22,9 @@ const MenuSidebar = ({ isOpen, onClose }: MenuSidebarProps) => {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   const menuItems: MenuItem[] = [
-    { icon: FileEdit, label: "Cập nhật hồ sơ", path: "/profile" },
+    { icon: FileEdit, label: "Cập nhật hồ sơ", path: "/identification" },
     { icon: UserPlus, label: "Đăng ký tài khoản", path: "/bank-registration" },
     { icon: Compass, label: "Khám phá", path: "/explore" },
-    { icon: CheckCircle, label: "Định danh", path: "/identification" },
     { icon: Lock, label: "Đổi mật khẩu", action: () => setShowPasswordModal(true) },
   ];
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Phone, User, Lock, Eye, EyeOff } from "lucide-react";
+import { Phone, User, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { useMutation } from "@tanstack/react-query";
+import { authApi } from "@/lib/api";
 
 const registerSchema = z
   .object({
@@ -47,13 +49,28 @@ const Register = () => {
     },
   });
 
+  const registerMutation = useMutation({
+    mutationFn: (data: RegisterFormData) => authApi.register(data),
+    onSuccess: () => {
+      toast({
+        title: "Đăng ký thành công",
+        description:
+          "Tài khoản của bạn đã được tạo thành công! Vui lòng đăng nhập.",
+      });
+      navigate("/login");
+    },
+    onError: (error: { response?: { data?: { message?: string } } }) => {
+      console.error("Register failed:", error);
+      toast({
+        title: "Đăng ký thất bại",
+        description: error.response?.data?.message || "Đã có lỗi xảy ra",
+        variant: "destructive",
+      });
+    },
+  });
+
   const onSubmit = (data: RegisterFormData) => {
-    console.log("Register data:", data);
-    toast({
-      title: "Đăng ký thành công",
-      description: "Tài khoản của bạn đã được tạo thành công!",
-    });
-    navigate("/login");
+    registerMutation.mutate(data);
   };
 
   return (
@@ -172,9 +189,14 @@ const Register = () => {
         <div className="pt-4">
           <Button
             type="submit"
+            disabled={registerMutation.isPending}
             className="w-full h-12 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
           >
-            Đăng ký
+            {registerMutation.isPending ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              "Đăng ký"
+            )}
           </Button>
         </div>
       </form>

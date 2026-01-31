@@ -22,10 +22,10 @@ import {
 } from "lucide-react";
 import MobileHeader from "@/components/MobileHeader";
 import MenuSidebar from "@/components/MenuSidebar";
-import taxEmblem from "@/assets/thuedinetu.png";
 import trongDong from "@/assets/trongdong.png";
 import trongDongImage from "@/assets/trong.png";
-import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { authApi } from "@/lib/api";
 
 interface ServiceItem {
   icon: React.ElementType;
@@ -38,7 +38,7 @@ const quickActions: ServiceItem[] = [
   {
     icon: FileEdit,
     label: "Cập nhật hồ sơ",
-    path: "/profile/update",
+    path: "/profile",
     color: "text-primary",
   },
   {
@@ -50,7 +50,7 @@ const quickActions: ServiceItem[] = [
   {
     icon: Fingerprint,
     label: "Mã định danh",
-    path: "/identification",
+    path: "/qr",
     color: "text-primary",
   },
   {
@@ -94,46 +94,54 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const { data: userData } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: () => authApi.getUser().then((res) => res.data),
+  });
+
+  const profile = userData?.data || userData;
+
   return (
     <div className="min-h-screen bg-background pb-6">
-      {/* Header */}
       <MobileHeader
         showMenu
         onMenu={() => setMenuOpen(true)}
         onBell={() => navigate("/notifications")}
       />
 
-      {/* Decorative background */}
       <div className="relative">
-        {/* User Info Card */}
         <div className="relative z-10 mx-4 mt-4">
-          <div
-            className="bg-card rounded-2xl p-4 shadow-lg flex items-center gap-4"
-            style={{
-              backgroundImage: `url(${trongDong})`,
-              opacity: 2,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <div className="w-14 h-14 rounded-full bg-transparent flex items-center justify-center border-2 border-red-800">
-              <User size={38} className="text-black" />
+          <div className="bg-card rounded-2xl px-2 py-3 shadow-lg flex items-center gap-2 relative overflow-hidden">
+            <div
+              className="absolute inset-0 opacity-40"
+              style={{
+                backgroundImage: `url(${trongDong})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+            <div className="relative z-10 w-14 h-14 rounded-full bg-transparent flex items-center justify-center border-2 border-red-800">
+              <User size={46} className="text-black" />
             </div>
 
-            <div className="flex-1">
-              <p className="text-md  text-black font-semibold">
+            <div className="relative z-10 flex-1">
+              <p className="text-md text-black font-semibold">
                 Mã Số Thuế:{" "}
                 <span className="font-semibold text-foreground">
-                  Chưa có MST
+                  {profile?.tax_code || "Chưa có MST"}
                 </span>
               </p>
               <p className="text-md  text-black font-semibold">
                 Doanh Nghiệp:{" "}
-                <span className="font-semibold text-foreground">  
-                  Chưa cập nhật thông tin
+                <span className="font-semibold text-foreground">
+                  {profile?.business_name ||
+                    profile?.name ||
+                    "Chưa cập nhật thông tin"}
                 </span>
               </p>
-              <p className="text-primary text-black font-semibold">0909234023</p>
+              <p className="text-primary text-black font-semibold">
+                {profile?.phone || "09xxxxxxxxx"}
+              </p>
             </div>
           </div>
         </div>
@@ -141,31 +149,32 @@ const Dashboard = () => {
 
       {/* Quick Actions */}
       <div className="px-4 mt-6 relative">
-        <div
-          className="bg-card rounded-2xl p-4 shadow-lg flex-col items-center gap-4"
-          style={{
-            backgroundImage: `url(${trongDongImage})`,
-            opacity: 2,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          <h2 className="text-sm font-semibold text-foreground mb-3">
+        <div className="bg-card rounded-2xl p-4 shadow-lg flex-col items-center gap-4 relative overflow-hidden">
+          {/* Background pattern with reduced opacity */}
+          <div
+            className="absolute inset-0 opacity-70"
+            style={{
+              backgroundImage: `url(${trongDongImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
+          <h2 className="relative z-10 text-sm font-semibold text-foreground mb-3">
             Chức năng hay dùng
           </h2>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="relative z-10 grid grid-cols-4 gap-3">
             {quickActions.map((item, index) => {
               const Icon = item.icon;
               return (
                 <button
                   key={index}
                   onClick={() => item.path && navigate(item.path)}
-                  className="bg-card rounded-xl border border-border"
+                  className="flex flex-col items-center min-h-[80px]"
                 >
-                  <div className="w-10 h-10 mx-auto rounded-xl bg-primary/10 flex items-center justify-center mb-2">
-                    <Icon size={20} className={item.color || "text-primary"} />
+                  <div className="w-10 h-8 mx-auto rounded-xl bg-primary flex items-center justify-center mb-2 flex-shrink-0">
+                    <Icon size={20} className={"text-white"} />
                   </div>
-                  <p className="text-xs text-center text-foreground font-medium leading-tight">
+                  <p className="text-xs text-center text-foreground font-medium leading-tight h-10 flex items-start justify-center line-clamp-2 pt-1">
                     {item.label}
                   </p>
                 </button>
@@ -178,16 +187,17 @@ const Dashboard = () => {
       {/* Service Groups */}
       <div className="px-4 mt-5">
         {/* Decorative background with emblem */}
-        <div
-          className="relative bg-card rounded-2xl p-4 border border-border overflow-hidden"
-          style={{
-            backgroundImage: `url(${trongDongImage})`,
-            opacity: 2,
-            backgroundSize: "fill",
-            backgroundPosition: "center",
-          }}
-        >
-          <h2 className="text-sm font-semibold text-foreground mb-3">
+        <div className="relative bg-card rounded-2xl p-4 border border-border overflow-hidden">
+          {/* Background pattern with reduced opacity */}
+          <div
+            className="absolute inset-0 opacity-30"
+            style={{
+              backgroundImage: `url(${trongDongImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
+          <h2 className="relative z-10 text-sm font-semibold text-foreground mb-3">
             Danh sách nhóm dịch vụ
           </h2>
           {/* Watermark */}
@@ -197,19 +207,19 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="relative z-10 grid grid-cols-3 gap-4 ">
+          <div className="relative z-10 grid grid-cols-3 gap-4">
             {serviceGroups.slice(0, 18).map((item, index) => {
               const Icon = item.icon;
               return (
                 <button
                   key={index}
-                  onClick={() => item.path && navigate(item.path)}
-                  className="flex flex-col items-center gap-2 p-2 bg-card rounded-xl hover:bg-muted/50 transition-colors"
+                  disabled
+                  className="flex flex-col items-center gap-2 p-2 bg-card rounded-xl hover:bg-muted/50 transition-colors min-h-[100px]"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <Icon size={18} className="text-primary" />
                   </div>
-                  <span className="text-xs text-center text-foreground font-medium leading-tight line-clamp-2">
+                  <span className="text-xs text-center text-foreground font-medium leading-tight flex items-center justify-center h-10 line-clamp-2">
                     {item.label}
                   </span>
                 </button>

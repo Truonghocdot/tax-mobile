@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { User, Lock, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { User, Lock, Eye, EyeOff, ShieldCheck, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,9 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { useMutation } from "@tanstack/react-query";
+import { authApi } from "@/lib/api";
 
 const loginSchema = z.object({
-  phoneNumber: z.string().min(10, "Số điện thoại không hợp lệ"),
+  username: z.string().min(1, "Vui lòng nhập tên đăng nhập"),
   password: z.string().min(1, "Vui lòng nhập mật khẩu"),
   rememberMe: z.boolean().optional(),
 });
@@ -29,19 +31,42 @@ const Login = () => {
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      phoneNumber: "",
+      username: "",
       password: "",
       rememberMe: false,
     },
   });
 
+  const loginMutation = useMutation({
+    mutationFn: (data: LoginFormData) => authApi.login(data),
+    onSuccess: (response) => {
+      // Assuming the API returns a token in response.data.token
+      // Adjust based on actual API response structure
+      const token = response.data.data.token;
+      if (token) {
+        localStorage.setItem("token", token);
+      }
+
+      toast({
+        title: "Đăng nhập thành công",
+        description: "Chào mừng bạn quay trở lại!",
+      });
+      navigate("/");
+    },
+    onError: (error: { response?: { data?: { message?: string } } }) => {
+      console.error("Login failed:", error);
+      toast({
+        title: "Đăng nhập thất bại",
+        description:
+          error.response?.data?.message ||
+          "Vui lòng kiểm tra lại thông tin đăng nhập",
+        variant: "destructive",
+      });
+    },
+  });
+
   const onSubmit = (data: LoginFormData) => {
-    console.log("Login data:", data);
-    toast({
-      title: "Đăng nhập thành công",
-      description: "Chào mừng bạn quay trở lại!",
-    });
-    navigate("/");
+    loginMutation.mutate(data);
   };
 
   return (
@@ -54,7 +79,7 @@ const Login = () => {
             "pb-2 font-medium transition-all",
             isLoginTab
               ? "text-primary-foreground border-b-2 border-primary-foreground"
-              : "text-primary-foreground/50"
+              : "text-primary-foreground/50",
           )}
         >
           Đăng nhập
@@ -65,7 +90,7 @@ const Login = () => {
             "pb-2 font-medium transition-all",
             !isLoginTab
               ? "text-primary-foreground border-b-2 border-primary-foreground"
-              : "text-primary-foreground/50"
+              : "text-primary-foreground/50",
           )}
         >
           Đăng ký
@@ -74,16 +99,21 @@ const Login = () => {
 
       {/* Form */}
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-        {/* Phone Number */}
+        {/* Username */}
         <div className="relative">
           <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
             <User size={18} />
           </div>
           <Input
-            {...form.register("phoneNumber")}
-            placeholder="Số điện thoại"
+            {...form.register("username")}
+            placeholder="Tên đăng nhập"
             className="pl-12 h-12 bg-transparent border-0 border-b border-muted-foreground/30 rounded-none text-primary-foreground placeholder:text-muted-foreground/50 focus-visible:ring-0 focus-visible:border-primary-foreground"
           />
+          {form.formState.errors.username && (
+            <p className="text-xs text-destructive mt-1">
+              {form.formState.errors.username.message}
+            </p>
+          )}
         </div>
 
         {/* Password */}
@@ -104,6 +134,11 @@ const Login = () => {
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
+          {form.formState.errors.password && (
+            <p className="text-xs text-destructive mt-1">
+              {form.formState.errors.password.message}
+            </p>
+          )}
         </div>
 
         {/* Remember & Forgot */}
@@ -136,19 +171,52 @@ const Login = () => {
         <div className="flex items-center gap-3 pt-4">
           <Button
             type="submit"
+            disabled={loginMutation.isPending}
             className="flex-1 h-12 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
           >
-            Đăng nhập
+            {loginMutation.isPending ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              "Đăng nhập"
+            )}
           </Button>
           <button
             type="button"
             className="w-12 h-12 rounded-lg border border-muted-foreground/30 flex items-center justify-center text-primary-foreground/70 hover:bg-white/5 transition-colors"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="3" width="7" height="7" stroke="currentColor" strokeWidth="2" />
-              <rect x="14" y="3" width="7" height="7" stroke="currentColor" strokeWidth="2" />
-              <rect x="3" y="14" width="7" height="7" stroke="currentColor" strokeWidth="2" />
-              <rect x="14" y="14" width="7" height="7" stroke="currentColor" strokeWidth="2" />
+              <rect
+                x="3"
+                y="3"
+                width="7"
+                height="7"
+                stroke="currentColor"
+                strokeWidth="2"
+              />
+              <rect
+                x="14"
+                y="3"
+                width="7"
+                height="7"
+                stroke="currentColor"
+                strokeWidth="2"
+              />
+              <rect
+                x="3"
+                y="14"
+                width="7"
+                height="7"
+                stroke="currentColor"
+                strokeWidth="2"
+              />
+              <rect
+                x="14"
+                y="14"
+                width="7"
+                height="7"
+                stroke="currentColor"
+                strokeWidth="2"
+              />
             </svg>
           </button>
         </div>
