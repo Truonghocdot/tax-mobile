@@ -15,7 +15,7 @@ const navItems: NavItem[] = [
 
 const AuthBottomNav = () => {
   return (
-    <nav className="fixed bottom-0 pb-4 left-0 right-0 z-30 max-w-md mx-auto">
+    <nav className="relative bottom-0 pb-4 left-0 right-0 z-30 max-w-md mx-auto">
       <div className="flex justify-around items-center py-3 px-4">
         {navItems.map((item, index) => {
           const Icon = item.icon;
