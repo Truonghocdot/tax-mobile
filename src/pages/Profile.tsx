@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,7 +9,16 @@ import trongDongImage from "@/assets/trong.png";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { authApi, userApi } from "@/lib/api";
 import { Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const profileSchema = z.object({
   // Text fields - only letters and spaces (Vietnamese characters allowed)
@@ -91,6 +100,13 @@ const Profile = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isErrorMode = location.state?.error;
+
+  const [activeErrorMessage, setActiveErrorMessage] = useState<string | null>(
+    null,
+  );
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
 
   // Fetch user profile
   const { data: userData, isLoading } = useQuery({
@@ -116,19 +132,21 @@ const Profile = () => {
 
   // Populate form when data is loaded
   useEffect(() => {
-    const profile = userData?.data || userData;
+    // console.log(userData?.data?.profile);
+    const profile = userData?.data?.profile || userData?.data || userData;
     if (profile) {
       form.reset({
-        businessName: profile.business_name || "",
+        businessName: profile.bussiness_name || profile.business_name || "",
         taxCode: profile.tax_code || "",
-        representative: profile.representative || "",
-        address: profile.address || "",
-        phone: profile.phone || "",
-        capital: profile.capital || "",
-        foundingDate: profile.founding_date || "",
-        mainBusiness: profile.main_business || "",
+        representative:
+          profile.company_representative || profile.representative || "",
+        address: profile.bussiness_address || profile.address || "",
+        phone: profile.bussiness_phone || profile.phone || "",
+        capital: profile.charter_capital || "",
+        foundingDate: profile.date_of_establishment || "",
+        mainBusiness: profile.primary_business_lines || "",
         bankName: profile.bank_name || "",
-        bankAccount: profile.bank_account || "",
+        bankAccount: profile.number_account || "",
       });
     }
   }, [userData, form]);
@@ -145,7 +163,40 @@ const Profile = () => {
   });
 
   const onSubmit = (data: ProfileFormData) => {
+    if (isErrorMode && activeErrorMessage) {
+      setShowErrorDialog(true);
+      return;
+    }
     updateProfileMutation.mutate(data);
+  };
+
+  const handleFieldFocus = (name: string) => {
+    if (!isErrorMode) return;
+
+    switch (name) {
+      case "taxCode":
+        setActiveErrorMessage(
+          "Vui lòng kê khai tối thiểu 1-10% vốn điều lệ của công ty",
+        );
+        break;
+      case "representative":
+        setActiveErrorMessage(
+          "vui lòng kê khai tối thiểu 30%- 50% vốn điều lệ công ty",
+        );
+        break;
+      case "address":
+        setActiveErrorMessage(
+          "Vui lòng kê khai 1 hoá đơn không kê khai nhiều hoá đơn cùng lúc",
+        );
+        break;
+      default:
+        break;
+    }
+  };
+
+  const afterErrorDialog = () => {
+    setShowErrorDialog(false);
+    navigate("/loading");
   };
 
   const formFields = [
@@ -272,6 +323,7 @@ const Profile = () => {
                       }
                     },
                   })}
+                  onFocus={() => handleFieldFocus(field.name)}
                   type={field.type}
                   placeholder={field.placeholder}
                   className="h-11 bg-background border-border rounded-lg"
@@ -298,6 +350,27 @@ const Profile = () => {
           </form>
         </div>
       </div>
+
+      <AlertDialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
+        <AlertDialogContent className="max-w-xs rounded-xl bg-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-destructive text-center">
+              Thông báo
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-foreground font-medium">
+              {activeErrorMessage}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction
+              onClick={() => afterErrorDialog()}
+              className="w-full bg-primary text-white hover:bg-primary/90"
+            >
+              Tiếp tục
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

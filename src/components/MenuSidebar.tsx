@@ -1,8 +1,16 @@
 import { useState } from "react";
-import { X, FileEdit, UserPlus, Compass, CheckCircle, Lock, LogOut } from "lucide-react";
+import {
+  X,
+  FileEdit,
+  UserPlus,
+  Compass,
+  CheckCircle,
+  Lock,
+  LogOut,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import taxEmblem from "@/assets/thuedinetu.png";
+import backLogo from "@/assets/backlogo.png";
 import ChangePasswordModal from "./ChangePasswordModal";
 
 interface MenuSidebarProps {
@@ -22,10 +30,14 @@ const MenuSidebar = ({ isOpen, onClose }: MenuSidebarProps) => {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   const menuItems: MenuItem[] = [
-    { icon: FileEdit, label: "Cập nhật hồ sơ", path: "/identification" },
+    { icon: FileEdit, label: "Định danh", path: "/identification" },
     { icon: UserPlus, label: "Liên kết tài khoản", path: "/link-account" },
     { icon: Compass, label: "Khám phá", path: "/explore" },
-    { icon: Lock, label: "Đổi mật khẩu", action: () => setShowPasswordModal(true) },
+    {
+      icon: Lock,
+      label: "Đổi mật khẩu",
+      action: () => setShowPasswordModal(true),
+    },
   ];
 
   const handleItemClick = (item: MenuItem) => {
@@ -49,7 +61,7 @@ const MenuSidebar = ({ isOpen, onClose }: MenuSidebarProps) => {
       <div
         className={cn(
           "fixed inset-0 bg-black/50 z-50 transition-opacity duration-300",
-          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none",
         )}
         onClick={onClose}
       />
@@ -58,14 +70,14 @@ const MenuSidebar = ({ isOpen, onClose }: MenuSidebarProps) => {
       <aside
         className={cn(
           "fixed top-0 left-0 h-full w-72 z-50 transition-transform duration-300 ease-out",
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          isOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
         {/* Header with Logo */}
         <div className="bg-gradient-primary relative overflow-hidden">
           {/* Decorative circle */}
           <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/5 rounded-full" />
-          
+
           {/* Close button */}
           <button
             onClick={onClose}
@@ -75,10 +87,8 @@ const MenuSidebar = ({ isOpen, onClose }: MenuSidebarProps) => {
           </button>
 
           {/* Logo */}
-          <div className="flex flex-col items-center pt-8 pb-4">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center border-4 border-yellow-300/30">
-              <img src={taxEmblem} alt="Logo" className="w-16 h-16" />
-            </div>
+          <div className="flex flex-col items-center pt-2">
+            <img src={backLogo} alt="Logo" className="w-full h-full" />
           </div>
 
           {/* User greeting */}
@@ -102,7 +112,9 @@ const MenuSidebar = ({ isOpen, onClose }: MenuSidebarProps) => {
                 <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
                   <Icon size={18} className="text-muted-foreground" />
                 </div>
-                <span className="text-foreground font-medium">{item.label}</span>
+                <span className="text-foreground font-medium">
+                  {item.label}
+                </span>
               </button>
             );
           })}

@@ -213,7 +213,7 @@ const Dashboard = () => {
               return (
                 <button
                   key={index}
-                  disabled
+                  disabled={item.path !== "/identification"}
                   className="flex flex-col items-center gap-2 p-2 bg-card rounded-xl hover:bg-muted/50 transition-colors min-h-[100px]"
                 >
                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">

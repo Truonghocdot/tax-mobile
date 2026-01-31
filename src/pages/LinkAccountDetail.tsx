@@ -3,11 +3,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 import { userApi } from "@/lib/api";
 import { TypeBank } from "@/consts/TypeBank";
@@ -34,11 +43,11 @@ const LinkAccountDetail = () => {
   const location = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
-  // Get selected bank from navigation state
   const selectedBank = location.state?.bank as Bank | undefined;
 
-  // Redirect back if no bank selected
   useEffect(() => {
     if (!selectedBank) {
       navigate("/link-account");
@@ -66,16 +75,15 @@ const LinkAccountDetail = () => {
       });
     },
     onSuccess: (response) => {
-      toast({
-        title: "Thành công",
-        description:
-          response.data?.message ||
+      setSuccessMessage(
+        response.data?.message ||
           "Đây là tài khoản mới liên kết, vui lòng liên hệ cán bộ hỗ trợ để xác minh thông tin",
-      });
-      navigate("/link-account");
+      );
+      setShowSuccessDialog(true);
       queryClient.invalidateQueries({ queryKey: ["userProfile"] });
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
+      // ... existing error toast
       console.error("Add bank failed:", error);
       toast({
         title: "Lỗi",
@@ -86,6 +94,11 @@ const LinkAccountDetail = () => {
     },
   });
 
+  const handleSuccessClose = () => {
+    setShowSuccessDialog(false);
+    navigate("/link-account");
+  };
+
   const onSubmit = (data: LinkAccountFormData) => {
     addBankMutation.mutate(data);
   };
@@ -94,7 +107,7 @@ const LinkAccountDetail = () => {
 
   return (
     <div className="bg-white min-h-screen flex relative flex-col">
-      {/* Header */}
+      {/* ... existing JSX ... */}
       <div className="bg-red-800 text-white p-4 flex items-center shadow-md">
         <Button
           variant="ghost"
@@ -118,6 +131,7 @@ const LinkAccountDetail = () => {
       </div>
 
       <div className="flex-1 p-4 overflow-y-auto">
+        {/* ... existing form content ... */}
         <p className="text-red-600 text-sm mb-4 text-center">
           Vui lòng nhập thông tin đã đăng ký với ngân hàng vào các trường: Tên
           tài khoản, Số điện thoại, Số tài khoản/Thẻ.
@@ -130,6 +144,9 @@ const LinkAccountDetail = () => {
         </div>
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {/* ... existing fields ... */}
+
+          {/* ... accountNumber field ... */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <span className="text-gray-600">Tên ngân hàng</span>
@@ -198,6 +215,27 @@ const LinkAccountDetail = () => {
           </Button>
         </form>
       </div>
+
+      <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <AlertDialogContent className="bg-white rounded-xl w-[90%] max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-center text-green-600">
+              Thành công
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-gray-700 py-4">
+              {successMessage}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction
+              onClick={handleSuccessClose}
+              className="w-full bg-red-700 hover:bg-red-800 text-white"
+            >
+              Tiếp tục gửi yêu cầu
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
