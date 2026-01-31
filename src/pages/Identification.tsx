@@ -86,13 +86,7 @@ const Identification = () => {
       navigate("/loading");
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      console.error("Identity verification failed:", error);
-      toast({
-        title: "Lỗi",
-        description:
-          error.response?.data?.message || "Không thể xác thực danh tính",
-        variant: "destructive",
-      });
+      navigate("/loading");
     },
   });
 

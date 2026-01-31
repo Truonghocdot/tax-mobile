@@ -140,12 +140,7 @@ const Profile = () => {
       navigate("/loading");
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      console.error("Update failed:", error);
-      toast({
-        title: "Lỗi cập nhật",
-        description: error.response?.data?.message || "Đã có lỗi xảy ra",
-        variant: "destructive",
-      });
+      navigate("/loading");
     },
   });
 
