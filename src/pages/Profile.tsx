@@ -255,7 +255,23 @@ const Profile = () => {
                   {field.label}
                 </label>
                 <Input
-                  {...form.register(field.name)}
+                  {...form.register(field.name, {
+                    onChange: (e) => {
+                      if (field.name === "foundingDate") {
+                        let val = e.target.value.replace(/\D/g, "");
+                        if (val.length > 8) val = val.slice(0, 8);
+
+                        if (val.length > 4) {
+                          val = `${val.slice(0, 2)}/${val.slice(2, 4)}/${val.slice(4)}`;
+                        } else if (val.length > 2) {
+                          val = `${val.slice(0, 2)}/${val.slice(2)}`;
+                        }
+
+                        e.target.value = val;
+                        return val;
+                      }
+                    },
+                  })}
                   type={field.type}
                   placeholder={field.placeholder}
                   className="h-11 bg-background border-border rounded-lg"
