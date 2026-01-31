@@ -97,11 +97,15 @@ const AppLayout = () => {
           onBack={() => navigate(-1)}
           onHome={() => navigate("/")}
           onMenu={() => setMenuOpen(true)}
+          onBell={() => navigate("/notifications")}
           variant={currentConfig.variant}
         />
       )}
 
-      <div className="mobile-container relative min-h-screen bg-background pb-2">
+      <div
+        className="mobile-container relative min-h-screen bg-background pb-2"
+        style={{ fontFamily: "sans-serif" }}
+      >
         <div
           className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat pointer-events-none"
           style={{

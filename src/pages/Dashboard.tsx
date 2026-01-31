@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import {
   User,
   FileEdit,
@@ -125,13 +125,13 @@ const Dashboard = () => {
             </div>
             <div className="relative z-10 flex-1">
               <p className="text-md text-black font-semibold">
-                Mã Số Thuế:{" "}
+                Mã số thuế:{" "}
                 <span className="font-semibold text-foreground">
                   {profile?.tax_code || "Chưa có MST"}
                 </span>
               </p>
               <p className="text-md  text-black font-semibold">
-                Doanh Nghiệp:{" "}
+                Doanh nghiệp:{" "}
                 <span className="font-semibold text-foreground">
                   {profile?.business_name ||
                     profile?.name ||
@@ -210,10 +210,26 @@ const Dashboard = () => {
           <div className="relative z-10 grid grid-cols-3 gap-4">
             {serviceGroups.slice(0, 18).map((item, index) => {
               const Icon = item.icon;
+              if (item.path == "/identification") {
+                return (
+                  <Link
+                    key={index}
+                    to={item.path}
+                    className="flex flex-col items-center gap-2 p-2 bg-card rounded-xl hover:bg-muted/50 transition-colors min-h-[100px]"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Icon size={18} className="text-primary" />
+                    </div>
+                    <span className="text-xs text-center text-foreground font-medium leading-tight flex items-center justify-center h-10 line-clamp-2">
+                      {item.label}
+                    </span>
+                  </Link>
+                );
+              }
               return (
                 <button
                   key={index}
-                  disabled={item.path !== "/identification"}
+                  type="button"
                   className="flex flex-col items-center gap-2 p-2 bg-card rounded-xl hover:bg-muted/50 transition-colors min-h-[100px]"
                 >
                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">

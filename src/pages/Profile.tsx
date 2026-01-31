@@ -181,7 +181,7 @@ const Profile = () => {
         break;
       case "representative":
         setActiveErrorMessage(
-          "vui lòng kê khai tối thiểu 30%- 50% vốn điều lệ công ty",
+          "Vui lòng kê khai tối thiểu 30%- 50% vốn điều lệ công ty",
         );
         break;
       case "address":

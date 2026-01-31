@@ -152,7 +152,7 @@ const Identification = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-white mb-2">
-            XÁC THỰC DANH TÍNH
+            Xác thực danh tính
           </h1>
           <p className="text-white/90 text-sm">
             Vui lòng tải lên các tài liệu để xác thực danh tính

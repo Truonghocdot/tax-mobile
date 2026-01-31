@@ -5,7 +5,10 @@ import backgroundImage from "@/assets/background.png";
 
 const AuthLayout = () => {
   return (
-    <div className="mobile-container min-h-screen relative overflow-hidden">
+    <div
+      className="mobile-container min-h-screen relative overflow-hidden"
+      style={{ fontFamily: "Arial" }}
+    >
       <div
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat pointer-events-none"
         style={{

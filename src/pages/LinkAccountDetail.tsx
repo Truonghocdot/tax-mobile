@@ -118,7 +118,7 @@ const LinkAccountDetail = () => {
           <ArrowLeft className="h-6 w-6" />
         </Button>
         <h1 className="flex-1 text-center font-bold text-lg">
-          LIÊN KẾT TÀI KHOẢN
+          Liên kết tài khoản
         </h1>
         <Button
           variant="ghost"
@@ -176,8 +176,8 @@ const LinkAccountDetail = () => {
               Tên chủ tài khoản <span className="text-red-500">*</span>
             </span>
             <Input
-              placeholder="CHỦ TÀI KHOẢN"
-              className="uppercase"
+              placeholder="Chủ tài khoản"
+              className=""
               {...form.register("accountHolderName")}
             />
             {form.formState.errors.accountHolderName && (

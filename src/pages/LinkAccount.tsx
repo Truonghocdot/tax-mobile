@@ -141,7 +141,7 @@ const LinkAccount = () => {
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-6 w-6" />
           </Button>
-          <h1 className="flex-1 text-center font-bold text-lg text-primary uppercase">
+          <h1 className="flex-1 text-center font-bold text-lg text-primary">
             Liên kết tài khoản
           </h1>
           <div className="w-10"></div>
@@ -183,7 +183,7 @@ const LinkAccount = () => {
                       <p className="text-xs text-gray-500">
                         {item.number_account}
                       </p>
-                      <p className="text-[10px] text-gray-400 uppercase">
+                      <p className="text-[10px] text-gray-400">
                         {item.account_holder_name}
                       </p>
                     </div>

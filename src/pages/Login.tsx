@@ -40,8 +40,6 @@ const Login = () => {
   const loginMutation = useMutation({
     mutationFn: (data: LoginFormData) => authApi.login(data),
     onSuccess: (response) => {
-      // Assuming the API returns a token in response.data.token
-      // Adjust based on actual API response structure
       const token = response.data.data.token;
       if (token) {
         localStorage.setItem("token", token);

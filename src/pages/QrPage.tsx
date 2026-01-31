@@ -63,8 +63,8 @@ const QrPage = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center pt-4 px-6 relative z-10 text-white">
         {/* Logo Section */}
-        <h2 className="text-xl font-bold text-yellow-400 uppercase mb-8 tracking-wide text-center">
-          MÃ ĐỊNH DANH ĐIỆN TỬ
+        <h2 className="text-xl font-bold text-yellow-400 mb-8 tracking-wide text-center">
+          Mã định danh điện tử
         </h2>
         {/* QR Card */}
         <div className="bg-[#FFFBE6] w-full max-w-sm rounded-[2rem] p-8 flex flex-col items-center shadow-xl">
