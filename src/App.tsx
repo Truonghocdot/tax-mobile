@@ -20,6 +20,7 @@ import Profile from "@/pages/Profile";
 import Identification from "@/pages/Identification";
 import BankRegistration from "@/pages/BankRegistration";
 import LinkAccount from "@/pages/LinkAccount";
+import LinkAccountDetail from "@/pages/LinkAccountDetail";
 import QrPage from "@/pages/QrPage";
 import LoadingPage from "@/pages/LoadingPage";
 
@@ -49,6 +50,10 @@ const App = () => (
             <Route path="/identification" element={<Identification />} />
             <Route path="/bank-registration" element={<BankRegistration />} />
             <Route path="/link-account" element={<LinkAccount />} />
+            <Route
+              path="/link-account-detail"
+              element={<LinkAccountDetail />}
+            />
             <Route path="/qr" element={<QrPage />} />
           </Route>
 

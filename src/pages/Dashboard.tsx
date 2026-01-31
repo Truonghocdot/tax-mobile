@@ -42,9 +42,9 @@ const quickActions: ServiceItem[] = [
     color: "text-primary",
   },
   {
-    icon: Search,
-    label: "Tra cứu thông tin",
-    path: "/tax-lookup",
+    icon: User2,
+    label: "Định danh",
+    path: "/identification",
     color: "text-primary",
   },
   {
@@ -123,7 +123,6 @@ const Dashboard = () => {
             <div className="relative z-10 w-14 h-14 rounded-full bg-transparent flex items-center justify-center border-2 border-red-800">
               <User size={46} className="text-black" />
             </div>
-
             <div className="relative z-10 flex-1">
               <p className="text-md text-black font-semibold">
                 Mã Số Thuế:{" "}
@@ -140,7 +139,7 @@ const Dashboard = () => {
                 </span>
               </p>
               <p className="text-primary text-black font-semibold">
-                {profile?.phone || "09xxxxxxxxx"}
+                {profile?.phone}
               </p>
             </div>
           </div>
@@ -169,6 +168,7 @@ const Dashboard = () => {
                 <button
                   key={index}
                   onClick={() => item.path && navigate(item.path)}
+                  disabled={item.path == "/tax-lookup"}
                   className="flex flex-col items-center min-h-[80px]"
                 >
                   <div className="w-10 h-8 mx-auto rounded-xl bg-primary flex items-center justify-center mb-2 flex-shrink-0">

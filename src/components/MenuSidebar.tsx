@@ -23,7 +23,7 @@ const MenuSidebar = ({ isOpen, onClose }: MenuSidebarProps) => {
 
   const menuItems: MenuItem[] = [
     { icon: FileEdit, label: "Cập nhật hồ sơ", path: "/identification" },
-    { icon: UserPlus, label: "Đăng ký tài khoản", path: "/bank-registration" },
+    { icon: UserPlus, label: "Liên kết tài khoản", path: "/link-account" },
     { icon: Compass, label: "Khám phá", path: "/explore" },
     { icon: Lock, label: "Đổi mật khẩu", action: () => setShowPasswordModal(true) },
   ];
@@ -84,7 +84,7 @@ const MenuSidebar = ({ isOpen, onClose }: MenuSidebarProps) => {
           {/* User greeting */}
           <div className="bg-primary/80 py-3 text-center">
             <span className="text-primary-foreground font-medium">
-              Xin chào <span className="font-bold">0909234023</span>
+              Xin chào
             </span>
           </div>
         </div>

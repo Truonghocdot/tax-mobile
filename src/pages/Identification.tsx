@@ -5,8 +5,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
-import { userApi } from "@/lib/api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { userApi, authApi } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
 import trongDongImage from "@/assets/trong.png";
 
@@ -46,6 +46,12 @@ const Identification = () => {
     mode: "onSubmit",
   });
 
+  // Fetch user data to pre-fill images
+  const { data: userData } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: () => authApi.getUser().then((res) => res.data),
+  });
+
   const [uploads, setUploads] = useState<UploadSection[]>([
     {
       id: "front",
@@ -60,12 +66,6 @@ const Identification = () => {
       preview: null,
     },
     {
-      id: "video",
-      label: "Tải lên video xác thực:",
-      type: "video",
-      preview: null,
-    },
-    {
       id: "selfie",
       label: "Tải lên ảnh cầm CCCD:",
       type: "image",
@@ -73,12 +73,32 @@ const Identification = () => {
     },
   ]);
 
+  // Pre-fill images when data is loaded
+  useEffect(() => {
+    if (userData?.data) {
+      const user = userData.data;
+      setUploads((prev) =>
+        prev.map((upload) => {
+          if (upload.id === "front" && user.front_cccd) {
+            return { ...upload, preview: user.front_cccd };
+          }
+          if (upload.id === "back" && user.back_cccd) {
+            return { ...upload, preview: user.back_cccd };
+          }
+          if (upload.id === "selfie" && user.holding_cccd) {
+            return { ...upload, preview: user.holding_cccd };
+          }
+          return upload;
+        }),
+      );
+    }
+  }, [userData]);
+
   const identityMutation = useMutation({
     mutationFn: (data: IdentificationFormData) => {
       const formData = new FormData();
       formData.append("front", data.front);
       formData.append("back", data.back);
-      formData.append("video", data.video);
       formData.append("selfie", data.selfie);
       return userApi.identityVerification(formData);
     },

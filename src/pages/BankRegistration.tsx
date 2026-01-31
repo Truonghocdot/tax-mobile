@@ -485,26 +485,70 @@ const BankRegistration = () => {
                       ? bankDef.shortName
                       : bank.bank_id || bank.bankId;
 
+                    // Get status badge styling
+                    const getStatusBadge = (status: string) => {
+                      switch (status) {
+                        case "verified":
+                          return {
+                            text: "Đã xác minh",
+                            className: "bg-green-100 text-green-700",
+                          };
+                        case "rejected":
+                          return {
+                            text: "Bị từ chối",
+                            className: "bg-red-100 text-red-700",
+                          };
+                        case "pending":
+                        default:
+                          return {
+                            text: "Đang xác minh",
+                            className: "bg-yellow-100 text-yellow-700",
+                          };
+                      }
+                    };
+
+                    const statusBadge = getStatusBadge(
+                      bank.status || "pending",
+                    );
+
                     return (
                       <button
                         key={bank.id}
                         onClick={() => handleRegisteredBankClick(bank)}
                         className="w-full flex items-center justify-between p-3 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
                       >
-                        <div className="text-left">
+                        <div className="text-left flex-1">
                           <p className="font-medium text-foreground">
                             {bankName}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {bank.type === 2
-                              ? `Số TK: ${bank.number_account || bank.account_number}`
-                              : `TK: ${bank.account_name}`}
+                            Số TK:{" "}
+                            {bank.number_account ||
+                              bank.account_number ||
+                              "N/A"}
                           </p>
+                          {bank.account_holder_name && (
+                            <p className="text-xs text-muted-foreground">
+                              Chủ TK: {bank.account_holder_name}
+                            </p>
+                          )}
+                          {bank.branch && (
+                            <p className="text-xs text-muted-foreground">
+                              Chi nhánh: {bank.branch}
+                            </p>
+                          )}
                         </div>
 
-                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                          {bank.type === 2 ? "TK Thẻ" : "E-Banking"}
-                        </span>
+                        <div className="flex flex-col gap-1 items-end">
+                          <span
+                            className={`text-xs px-2 py-1 rounded-full font-medium ${statusBadge.className}`}
+                          >
+                            {statusBadge.text}
+                          </span>
+                          <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                            {bank.type === 2 ? "TK Thẻ" : "E-Banking"}
+                          </span>
+                        </div>
                       </button>
                     );
                   })}

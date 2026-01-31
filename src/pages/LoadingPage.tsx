@@ -7,18 +7,16 @@ const LoadingPage = () => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Simulate loading progress
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
-          // Navigate to dashboard or success page after loading
           setTimeout(() => navigate("/dashboard"), 500);
           return 100;
         }
-        return prev + 2;
+        return prev + 1;
       });
-    }, 60);
+    }, 6000);
 
     return () => clearInterval(interval);
   }, [navigate]);

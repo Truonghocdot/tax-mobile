@@ -60,6 +60,8 @@ interface BankData {
   cvv?: string;
   expiredDate?: string;
   tagNumber?: string;
+  branch?: string;
+  accountHolderName?: string;
 }
 
 export const authApi = {
@@ -106,7 +108,11 @@ export const userApi = {
       CVV: data.cvv,
       expired_date: data.expiredDate,
       tag_number: data.tagNumber,
+      branch: data.branch,
+      account_holder_name: data.accountHolderName,
     }),
+  getQrBank: () => api.get("/qr-bank"),
+  getListBank: () => api.get("/user/list-bank"),
 };
 
 export default api;

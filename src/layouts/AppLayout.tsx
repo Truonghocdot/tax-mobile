@@ -60,6 +60,10 @@ const pageConfigs: Record<string, PageConfig> = {
     title: "Liên kết tài khoản",
     hideHeader: true, // Has custom header in component
   },
+  "/link-account-detail": {
+    title: "Chi tiết liên kết",
+    hideHeader: true, // Has custom header in component
+  },
 };
 
 const AppLayout = () => {
@@ -97,7 +101,7 @@ const AppLayout = () => {
         />
       )}
 
-      <div className="mobile-container relative min-h-screen bg-background pb-20">
+      <div className="mobile-container relative min-h-screen bg-background pb-2">
         <div
           className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat pointer-events-none"
           style={{
@@ -105,12 +109,8 @@ const AppLayout = () => {
             opacity: 2,
           }}
         ></div>
-        {/* Header - only show if not hidden */}
-
-        {/* Page Content */}
         <Outlet context={{ menuOpen, setMenuOpen }} />
 
-        {/* Menu Sidebar - only for pages that don't manage their own */}
         {currentConfig.hideHeader && (
           <MenuSidebar isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
         )}
@@ -123,7 +123,5 @@ export default AppLayout;
 
 // Hook to access layout context
 export const useAppLayout = () => {
-  return {
-    // Add any shared layout state/functions here
-  };
+  return {};
 };

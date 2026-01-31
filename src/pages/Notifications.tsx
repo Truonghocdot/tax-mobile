@@ -51,53 +51,25 @@ const Notifications = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Decorative header background */}
-      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-primary -z-10" />
-
+    <div className="min-h-screen relative">
       <div className="px-4 pt-4 pb-8">
-        <div 
-          className="bg-card rounded-2xl p-4 shadow-lg"
+        <div
+          className="bg-card rounded-2xl p-4 shadow-lg border border-border/50"
           style={{
-            backgroundImage: `url(${trongDongImage})`,
+            backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url(${trongDongImage})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         >
           <div className="flex items-center gap-3 mb-4">
             <Bell size={20} className="text-primary" />
-            <h2 className="text-lg font-semibold text-foreground">
-              Thông báo
-            </h2>
+            <h2 className="text-lg font-semibold text-foreground">Thông báo</h2>
           </div>
 
           <div className="space-y-3">
-            {mockNotifications.map((notification) => (
-              <div
-                key={notification.id}
-                className={cn(
-                  "p-4 rounded-xl border transition-colors",
-                  notification.read
-                    ? "bg-background border-border"
-                    : "bg-primary/5 border-primary/20"
-                )}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5">{getIcon(notification.type)}</div>
-                  <div className="flex-1">
-                    <h3 className="font-medium text-foreground">
-                      {notification.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {notification.message}
-                    </p>
-                    <span className="text-xs text-muted-foreground mt-2 block">
-                      {notification.time}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
+            <div className="p-8 text-center text-muted-foreground text-sm">
+              Chưa có thông báo nào
+            </div>
           </div>
         </div>
       </div>
