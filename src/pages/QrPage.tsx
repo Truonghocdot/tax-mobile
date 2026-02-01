@@ -132,8 +132,8 @@ const QrPage = () => {
                   src: favicon,
                   x: undefined,
                   y: undefined,
-                  height: 54, // 18% của 300
-                  width: 54,
+                  height: 36, // 18% của 300
+                  width: 36,
                   excavate: false, // Tạo vùng trắng cho logo
                 }}
               />
