@@ -134,7 +134,7 @@ const QrPage = () => {
                   y: undefined,
                   height: 54, // 18% của 300
                   width: 54,
-                  excavate: true, // Tạo vùng trắng cho logo
+                  excavate: false, // Tạo vùng trắng cho logo
                 }}
               />
             ) : (
