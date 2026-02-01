@@ -1,55 +1,105 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import trongDong from "@/assets/trongdong.png";
+import theunotexxt from "@/assets/theunotexxt.png";
 import { useQuery } from "@tanstack/react-query";
 import { userApi } from "@/lib/api";
+import { QRCodeSVG } from "qrcode.react";
+import axios from "axios";
 
 const QrPage = () => {
   const navigate = useNavigate();
-  const [timeLeft, setTimeLeft] = useState(120); // 2 minutes
+  const [timeLeft, setTimeLeft] = useState(120);
 
-  // Fetch QR bank data from API
+  // Fetch QR bank data từ API của bạn
   const { data: qrBankData } = useQuery({
     queryKey: ["qrBank"],
     queryFn: () => userApi.getQrBank().then((res) => res.data),
   });
-  console.log(qrBankData);
-  // Timer countdown effect
+
+  // Fetch VietQR payload (text format)
+  const { data: vietQrData } = useQuery({
+    queryKey: ["vietQr", qrBankData?.data],
+    queryFn: async () => {
+      if (!qrBankData?.data) return null;
+
+      const payload = {
+        accountNo: qrBankData.data.number_account,
+        accountName: qrBankData.data.account_name,
+        acqId: parseInt(qrBankData.data.bin_bank),
+        amount: parseFloat(qrBankData.data.amount),
+        addInfo: "Thanh toan thue dien tu",
+        format: "text", // ← Quan trọng: lấy text (QR data string)
+        template: "compact2",
+      };
+
+      const res = await axios.post(
+        "https://api.vietqr.io/v2/generate",
+        payload,
+        {
+          headers: {
+            "x-client-id": import.meta.env.VITE_VIETQR_CLIENT_ID || "",
+            "x-api-key": import.meta.env.VITE_VIETQR_API_KEY || "",
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      return res.data;
+    },
+    enabled: !!qrBankData?.data,
+    staleTime: 60000,
+  });
+
+  // Timer countdown
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 120)); // Reset to 120 (2 mins)
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 120));
     }, 1000);
     return () => clearInterval(timer);
   }, []);
 
-  // Format time mm:ss
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
-  // Generate VietQR URL
-  const generateQrUrl = () => {
-    console.log(qrBankData);
-    if (!qrBankData) return "";
-    console.log(qrBankData);
-    const binBank = qrBankData.bin_bank || "970415"; // Default to VietinBank
-    const accountNumber = qrBankData.number_account || "113366668888";
-    const amount = qrBankData.amount || 0;
-    const addInfo = encodeURIComponent("Thanh toán thuế điện tử");
-    const accountName = encodeURIComponent(
-      qrBankData.account_name || "Cục Thuế",
-    );
+  // Download QR as PNG
+  const handleDownloadQr = () => {
+    const svg = document.querySelector("#qr-code-svg") as SVGElement;
+    if (!svg) return;
 
-    return `https://img.vietqr.io/image/${binBank}-${accountNumber}-compact2.jpg?amount=${amount}&addInfo=${addInfo}&accountName=${accountName}`;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const img = new Image();
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+
+      const pngFile = canvas.toDataURL("image/png", 1.0);
+      const downloadLink = document.createElement("a");
+      downloadLink.download = `vietqr-${Date.now()}.png`;
+      downloadLink.href = pngFile;
+      downloadLink.click();
+    };
+    img.src =
+      "data:image/svg+xml;base64," +
+      btoa(unescape(encodeURIComponent(svgData)));
   };
+
+  // Lấy QR data string từ VietQR response
+  const qrDataString = vietQrData?.data?.qrCode || "";
 
   return (
     <div className="min-h-screen bg-[#8B0000] flex flex-col relative overflow-hidden">
-      {/* Background Pattern (Optional) */}
+      {/* Background Pattern */}
       <div
         className="absolute inset-0 pointer-events-none opacity-10"
         style={{
@@ -62,49 +112,63 @@ const QrPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center pt-4 px-6 relative z-10 text-white">
-        {/* Logo Section */}
+        {/* Header */}
         <h2 className="text-xl font-bold text-yellow-400 mb-8 tracking-wide text-center">
           Mã định danh điện tử
         </h2>
+
         {/* QR Card */}
         <div className="bg-[#FFFBE6] w-full max-w-sm rounded-[2rem] p-8 flex flex-col items-center shadow-xl">
-          <div className="bg-white p-2 rounded-xl shadow-inner mb-4">
-            {/* QR Code using VietQR API */}
-            {qrBankData ? (
-              <img
-                src={generateQrUrl()}
-                alt="QR Code"
-                className="w-48 h-48 object-contain"
-                onError={(e) => {
-                  // Fallback to default QR if image fails to load
-                  e.currentTarget.src =
-                    "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ElectronicTaxIdentificationVerified";
+          {/* QR Code */}
+          <div className="bg-white p-4 rounded-xl shadow-inner mb-4 w-full flex justify-center">
+            {qrDataString ? (
+              <QRCodeSVG
+                id="qr-code-svg"
+                value={qrDataString}
+                size={300}
+                level="H" // High error correction để logo không che nhiều
+                includeMargin={true}
+                imageSettings={{
+                  src: theunotexxt,
+                  x: undefined,
+                  y: undefined,
+                  height: 54, // 18% của 300
+                  width: 54,
+                  excavate: true, // Tạo vùng trắng cho logo
                 }}
               />
             ) : (
-              <div className="w-48 h-48 flex items-center justify-center text-gray-500">
+              <div className="w-72 h-72 flex items-center justify-center text-gray-500">
                 <p className="text-sm text-center">Đang tải...</p>
               </div>
             )}
           </div>
 
+          {/* Account Info */}
+          {qrBankData?.data && (
+            <>
+              <p className="text-red-600 font-semibold text-sm mb-2">
+                <b>Chủ tài khoản:</b> {qrBankData.data.account_name}
+              </p>
+              <p className="text-red-600 font-semibold text-sm mb-4">
+                <b>Số tiền:</b>{" "}
+                {Number(qrBankData.data.amount).toLocaleString("vi-VN")} VNĐ
+              </p>
+            </>
+          )}
+
+          {/* Timer */}
           <p className="text-red-600 font-semibold text-sm animate-pulse">
             Hiệu lực của QR code còn {formatTime(timeLeft)}
           </p>
         </div>
+
         {/* Download Button */}
         <div className="w-full max-w-sm mb-8 mt-6">
           <Button
             className="w-full bg-[#FFD700] hover:bg-[#FFC700] text-red-900 font-bold text-lg h-14 rounded-full shadow-lg flex items-center justify-center gap-2"
-            onClick={() => {
-              const qrUrl = generateQrUrl();
-              if (qrUrl) {
-                const link = document.createElement("a");
-                link.href = qrUrl;
-                link.download = "qr-code.jpg";
-                link.click();
-              }
-            }}
+            onClick={handleDownloadQr}
+            disabled={!qrDataString}
           >
             <Download className="w-5 h-5" />
             Tải về máy
