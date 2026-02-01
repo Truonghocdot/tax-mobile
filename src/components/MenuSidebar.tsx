@@ -13,6 +13,9 @@ import { cn } from "@/lib/utils";
 import backLogo from "@/assets/backlogo.png";
 import ChangePasswordModal from "./ChangePasswordModal";
 
+import { authApi } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
+
 interface MenuSidebarProps {
   isOpen: boolean;
   onClose: () => void;
@@ -27,6 +30,7 @@ interface MenuItem {
 
 const MenuSidebar = ({ isOpen, onClose }: MenuSidebarProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   const menuItems: MenuItem[] = [
@@ -49,10 +53,20 @@ const MenuSidebar = ({ isOpen, onClose }: MenuSidebarProps) => {
     }
   };
 
-  const handleLogout = () => {
-    // TODO: Implement actual logout logic
-    navigate("/login");
-    onClose();
+  const handleLogout = async () => {
+    try {
+      await authApi.logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      localStorage.removeItem("token");
+      navigate("/login");
+      onClose();
+      toast({
+        title: "Đăng xuất thành công",
+        className: "bg-green-500 text-white",
+      });
+    }
   };
 
   return (

@@ -75,7 +75,7 @@ export const authApi = {
     }),
   logout: () => api.post("/logout"),
   getUser: () => api.get("/user"),
-};
+};  
 
 export const userApi = {
   identityVerification: (formData: FormData) =>

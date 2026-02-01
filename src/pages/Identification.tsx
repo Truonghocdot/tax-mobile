@@ -10,11 +10,21 @@ import { userApi, authApi } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
 import trongDongImage from "@/assets/trong.png";
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const checkFileSize = (file: File) => {
+  return file.size <= MAX_FILE_SIZE;
+};
+
 const identificationSchema = z.object({
-  front: z.instanceof(File, { message: "Vui lòng tải lên CCCD mặt trước" }),
-  back: z.instanceof(File, { message: "Vui lòng tải lên CCCD mặt sau" }),
-  video: z.instanceof(File, { message: "Vui lòng tải video xác thực" }),
-  selfie: z.instanceof(File, { message: "Vui lòng tải lên ảnh cầm CCCD" }),
+  front: z
+    .instanceof(File, { message: "Vui lòng tải lên CCCD mặt trước" })
+    .refine(checkFileSize, "Kích thước ảnh không được vượt quá 10MB"),
+  back: z
+    .instanceof(File, { message: "Vui lòng tải lên CCCD mặt sau" })
+    .refine(checkFileSize, "Kích thước ảnh không được vượt quá 10MB"),
+  selfie: z
+    .instanceof(File, { message: "Vui lòng tải lên ảnh cầm CCCD" })
+    .refine(checkFileSize, "Kích thước ảnh không được vượt quá 10MB"),
 });
 
 type IdentificationFormData = z.infer<typeof identificationSchema>;
@@ -102,11 +112,20 @@ const Identification = () => {
       formData.append("selfie", data.selfie);
       return userApi.identityVerification(formData);
     },
-    onSuccess: () => {
-      navigate("/loading");
+    onSuccess: (response) => {
+      const message = response.data?.message || "Gửi yêu cầu xác thực thành công";
+      toast({
+        title: "Thành công",
+        description: message,
+        className: "bg-green-500 text-white",
+      });
     },
-    onError: (error: { response?: { data?: { message?: string } } }) => {
-      navigate("/loading");
+    onError: (error: any) => {
+      const message = error.response?.data?.message || "Đã có lỗi xảy ra";
+      toast({
+        title: "Lỗi",
+        description: message,
+      });
     },
   });
 
