@@ -128,14 +128,6 @@ const QrPage = () => {
                 size={300}
                 level="H" // High error correction để logo không che nhiều
                 includeMargin={true}
-                imageSettings={{
-                  src: favicon,
-                  x: undefined,
-                  y: undefined,
-                  height: 18, // 18% của 300
-                  width: 18,
-                  excavate: false, // Tạo vùng trắng cho logo
-                }}
               />
             ) : (
               <div className="w-72 h-72 flex items-center justify-center text-gray-500">
