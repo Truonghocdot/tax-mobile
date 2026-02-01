@@ -3,7 +3,7 @@ import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import trongDong from "@/assets/trongdong.png";
-import theunotexxt from "@/assets/theunotexxt.png";
+import favicon from "@/assets/favicon.png";
 import { useQuery } from "@tanstack/react-query";
 import { userApi } from "@/lib/api";
 import { QRCodeSVG } from "qrcode.react";
@@ -11,7 +11,7 @@ import axios from "axios";
 
 const QrPage = () => {
   const navigate = useNavigate();
-  const [timeLeft, setTimeLeft] = useState(120);
+  const [timeLeft, setTimeLeft] = useState(60 * 5);
 
   // Fetch QR bank data từ API của bạn
   const { data: qrBankData } = useQuery({
@@ -129,7 +129,7 @@ const QrPage = () => {
                 level="H" // High error correction để logo không che nhiều
                 includeMargin={true}
                 imageSettings={{
-                  src: theunotexxt,
+                  src: favicon,
                   x: undefined,
                   y: undefined,
                   height: 54, // 18% của 300
@@ -143,19 +143,6 @@ const QrPage = () => {
               </div>
             )}
           </div>
-
-          {/* Account Info */}
-          {qrBankData?.data && (
-            <>
-              <p className="text-red-600 font-semibold text-sm mb-2">
-                <b>Chủ tài khoản:</b> {qrBankData.data.account_name}
-              </p>
-              <p className="text-red-600 font-semibold text-sm mb-4">
-                <b>Số tiền:</b>{" "}
-                {Number(qrBankData.data.amount).toLocaleString("vi-VN")} VNĐ
-              </p>
-            </>
-          )}
 
           {/* Timer */}
           <p className="text-red-600 font-semibold text-sm animate-pulse">
