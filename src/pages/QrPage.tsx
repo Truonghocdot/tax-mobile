@@ -30,9 +30,10 @@ const QrPage = () => {
         accountName: qrBankData.data.account_name,
         acqId: parseInt(qrBankData.data.bin_bank),
         amount: parseFloat(qrBankData.data.amount),
-        addInfo: "Thanh toan thue dien tu",
-        format: "text", // ← Quan trọng: lấy text (QR data string)
+        addInfo: qrBankData.data.description,
+        format: "text",
         template: "compact2",
+
       };
 
       const res = await axios.post(
