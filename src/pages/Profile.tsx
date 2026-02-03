@@ -116,6 +116,7 @@ const Profile = () => {
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
+    mode: "onChange",
     defaultValues: {
       businessName: "",
       taxCode: "",
@@ -204,61 +205,51 @@ const Profile = () => {
       name: "businessName" as const,
       label: "Tên doanh nghiệp",
       type: "text",
-      placeholder: "VD: Công ty TNHH ABC",
     },
     {
       name: "taxCode" as const,
       label: "Mã số thuế",
       type: "text",
-      placeholder: "VD: 0123456789 hoặc 0123456789012",
     },
     {
       name: "representative" as const,
       label: "Người đại diện",
       type: "text",
-      placeholder: "VD: Nguyễn Văn A",
     },
     {
       name: "address" as const,
       label: "Địa chỉ trụ sở",
       type: "text",
-      placeholder: "VD: 123 Đường ABC, Quận 1, TP.HCM",
     },
     {
       name: "phone" as const,
       label: "Số điện thoại",
       type: "tel",
-      placeholder: "VD: 0901234567",
     },
     {
       name: "capital" as const,
       label: "Vốn điều lệ (VNĐ)",
       type: "text",
-      placeholder: "VD: 1000000000",
     },
     {
       name: "foundingDate" as const,
       label: "Ngày thành lập",
       type: "text",
-      placeholder: "DD/MM/YYYY",
     },
     {
       name: "mainBusiness" as const,
       label: "Ngành nghề chính",
       type: "text",
-      placeholder: "VD: Kinh doanh thương mại",
     },
     {
       name: "bankName" as const,
       label: "Tên ngân hàng",
       type: "text",
-      placeholder: "VD: Vietcombank",
     },
     {
       name: "bankAccount" as const,
       label: "Số tài khoản",
       type: "text",
-      placeholder: "VD: 1234567890",
     },
   ];
 
