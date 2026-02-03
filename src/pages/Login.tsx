@@ -76,8 +76,8 @@ const Login = () => {
           className={cn(
             "pb-2 font-medium transition-all",
             isLoginTab
-              ? "text-primary-foreground border-b-2 border-primary-foreground"
-              : "text-primary-foreground/50",
+              ? "text-white border-b-2 border-white"
+              : "text-white/50",
           )}
         >
           Đăng nhập
@@ -87,8 +87,8 @@ const Login = () => {
           className={cn(
             "pb-2 font-medium transition-all",
             !isLoginTab
-              ? "text-primary-foreground border-b-2 border-primary-foreground"
-              : "text-primary-foreground/50",
+              ? "text-white border-b-2 border-white"
+              : "text-white/50",
           )}
         >
           Đăng ký
@@ -99,13 +99,13 @@ const Login = () => {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
         {/* Username */}
         <div className="relative">
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white">
             <User size={18} />
           </div>
           <Input
             {...form.register("username")}
             placeholder="Tên đăng nhập"
-            className="pl-12 h-12 bg-transparent border-0 border-b border-muted-foreground/30 rounded-none text-primary-foreground placeholder:text-muted-foreground/50 focus-visible:ring-0 focus-visible:border-primary-foreground"
+            className="pl-12 h-12 bg-transparent border-0 border-b border-white/30 rounded-none text-white placeholder:text-white/50 focus-visible:ring-0 focus-visible:border-white"
           />
           {form.formState.errors.username && (
             <p className="text-xs text-destructive mt-1">
@@ -116,19 +116,19 @@ const Login = () => {
 
         {/* Password */}
         <div className="relative">
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white">
             <Lock size={18} />
           </div>
           <Input
             {...form.register("password")}
             type={showPassword ? "text" : "password"}
             placeholder="MST + Mật khẩu"
-            className="pl-12 pr-12 h-12 bg-transparent border-0 border-b border-muted-foreground/30 rounded-none text-primary-foreground placeholder:text-muted-foreground/50 focus-visible:ring-0 focus-visible:border-primary-foreground"
+            className="pl-12 pr-12 h-12 bg-transparent border-0 border-b border-white/30 rounded-none text-white placeholder:text-white/50 focus-visible:ring-0 focus-visible:border-white"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/50 hover:text-white transition-colors"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
@@ -152,14 +152,14 @@ const Login = () => {
             />
             <label
               htmlFor="rememberMe"
-              className="text-sm text-primary-foreground/70"
+              className="text-sm text-white/70"
             >
               Lưu thông tin đăng nhập
             </label>
           </div>
           <Link
             to="/forgot-password"
-            className="text-sm text-primary-foreground/50 hover:text-primary-foreground/70 underline"
+            className="text-sm text-white/50 hover:text-white/70 underline"
           >
             Quên mật khẩu?
           </Link>
@@ -180,7 +180,7 @@ const Login = () => {
           </Button>
           <button
             type="button"
-            className="w-12 h-12 rounded-lg border border-muted-foreground/30 flex items-center justify-center text-primary-foreground/70 hover:bg-white/5 transition-colors"
+            className="w-12 h-12 rounded-lg border border-white/30 flex items-center justify-center text-white/70 hover:bg-white/5 transition-colors"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <rect
@@ -224,10 +224,10 @@ const Login = () => {
       <div className="mt-8">
         <button className="w-full py-4 px-4 rounded-xl bg-card/10 border border-muted-foreground/20 flex items-center justify-between hover:bg-card/20 transition-colors">
           <div className="flex flex-col items-start">
-            <span className="text-primary-foreground font-medium">
+            <span className="text-white font-medium">
               Đăng nhập bằng tài khoản
             </span>
-            <span className="text-primary-foreground/60 text-sm">
+            <span className="text-white/60 text-sm">
               Định danh điện tử
             </span>
           </div>
