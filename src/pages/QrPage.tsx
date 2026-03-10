@@ -3,7 +3,7 @@ import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import trongDong from "@/assets/trongdong.png";
-import favicon from "@/assets/favicon.png";
+import theunotexxt from "@/assets/theunotexxt.png";
 import { useQuery } from "@tanstack/react-query";
 import { userApi } from "@/lib/api";
 import { QRCodeSVG } from "qrcode.react";
