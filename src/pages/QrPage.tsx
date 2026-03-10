@@ -124,7 +124,7 @@ const QrPage = () => {
             {qrBankData?.data && (
               <div className="w-full text-black mb-4 text-left px-2">
                 <p className="text-sm font-bold">
-                  Mst: {qrBankData.data.tax_id}
+                  MST: {qrBankData.data.tax_id}
                 </p>
                 <p className="text-sm font-bold leading-tight">
                   Tên công ty: {qrBankData.data.company_name}
