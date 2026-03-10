@@ -33,7 +33,6 @@ const QrPage = () => {
         addInfo: qrBankData.data.description,
         format: "text",
         template: "compact2",
-
       };
 
       const res = await axios.post(
@@ -121,17 +120,36 @@ const QrPage = () => {
         {/* QR Card */}
         <div className="bg-[#FFFBE6] w-full max-w-sm rounded-[2rem] p-8 flex flex-col items-center shadow-xl">
           {/* QR Code */}
-          <div className="bg-white p-4 rounded-xl shadow-inner mb-4 w-full flex justify-center">
+          <div className="bg-white p-6 rounded-xl shadow-inner mb-4 w-full flex flex-col items-center">
+            {qrBankData?.data && (
+              <div className="w-full text-black mb-4 text-left px-2">
+                <p className="text-sm font-bold">
+                  Mst: {qrBankData.data.tax_id}
+                </p>
+                <p className="text-sm font-bold leading-tight">
+                  Tên công ty: {qrBankData.data.company_name}
+                </p>
+              </div>
+            )}
+
             {qrDataString ? (
               <QRCodeSVG
                 id="qr-code-svg"
                 value={qrDataString}
-                size={300}
+                size={220}
                 level="H" // High error correction để logo không che nhiều
-                includeMargin={true}
+                includeMargin={false}
+                imageSettings={{
+                  src: theunotexxt,
+                  x: undefined,
+                  y: undefined,
+                  height: 40, // ~18% của 220
+                  width: 40,
+                  excavate: true, // Tạo vùng trắng cho logo
+                }}
               />
             ) : (
-              <div className="w-72 h-72 flex items-center justify-center text-gray-500">
+              <div className="w-52 h-52 flex items-center justify-center text-gray-500">
                 <p className="text-sm text-center">Đang tải...</p>
               </div>
             )}

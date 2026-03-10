@@ -7,21 +7,18 @@ const LoadingPage = () => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    if (progress >= 100) {
-      setTimeout(() => navigate("/dashboard"), 500);
-      return;
-    }
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prev + 1;
+      });
+    }, 1200);
 
-    const A = 11100;
-    const B = 101;
-    const timeoutDuration = A - B * (progress + 1);
-
-    const timer = setTimeout(() => {
-      setProgress((prev) => Math.min(prev + 1, 100));
-    }, timeoutDuration);
-
-    return () => clearTimeout(timer);
-  }, [progress, navigate]);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#f8341e] flex flex-col items-center justify-center px-6 text-white">
