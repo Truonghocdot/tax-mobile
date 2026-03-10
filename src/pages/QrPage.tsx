@@ -3,7 +3,6 @@ import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import trongDong from "@/assets/trongdong.png";
-import theunotexxt from "@/assets/theunotexxt.png";
 import { useQuery } from "@tanstack/react-query";
 import { userApi } from "@/lib/api";
 import { QRCodeSVG } from "qrcode.react";
@@ -137,16 +136,8 @@ const QrPage = () => {
                 id="qr-code-svg"
                 value={qrDataString}
                 size={220}
-                level="H" // High error correction để logo không che nhiều
+                level="H"
                 includeMargin={false}
-                imageSettings={{
-                  src: theunotexxt,
-                  x: undefined,
-                  y: undefined,
-                  height: 40, // ~18% của 220
-                  width: 40,
-                  excavate: true, // Tạo vùng trắng cho logo
-                }}
               />
             ) : (
               <div className="w-52 h-52 flex items-center justify-center text-gray-500">
