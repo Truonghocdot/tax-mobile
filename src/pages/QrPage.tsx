@@ -121,12 +121,12 @@ const QrPage = () => {
           {/* QR Code */}
           <div className="bg-white p-6 rounded-xl shadow-inner mb-4 w-full flex flex-col items-center">
             {qrBankData?.data && (
-              <div className="w-full text-black mb-4 text-left px-2">
+              <div className="w-full text-black mb-4 text-center px-2">
                 <p className="text-sm font-bold">
                   MST: {qrBankData.data.tax_id}
                 </p>
                 <p className="text-sm font-bold leading-tight">
-                  Tên công ty: {qrBankData.data.company_name}
+                  {qrBankData.data.company_name}
                 </p>
               </div>
             )}
